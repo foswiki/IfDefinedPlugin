@@ -16,7 +16,7 @@
 <table style="float:right">
 <tr>
   <td><img src="%ATTACHURLPATH%/wikiringlogo40x40.png"></td>
-  <td><a href="http://wikiring.de" title="Make your Wiki ring!" style="text-decoration:none">
+  <td><a href="http://wikiring.com" title="Make your Wiki ring!" style="text-decoration:none">
       Powered by <br /> <nop>WikiRing Consultants </a>
   </td>
 </tr>
@@ -26,7 +26,7 @@ There are two different ways to do that: either by using the inline
 =%<nop>IFDEFINED{"string" then="..." else="..."}%= tag that returns the 
 =then= or =else= argument depending on the =string= being defined, that is non-empty.
 There are no other ways to decide the condition but rendering the =test= string 
-being a <nop>TWikiML expression, for example by embedding a =%<nop>CALC{}%= expression. This simplifies
+being a <nop>TopicMarkup expression, for example by embedding a =%<nop>CALC{}%= expression. This simplifies
 this plugin alot and allows a rather flexible way to generate the condition.
 
 The other way is to use blocks of content surrounded by expressions like this:
@@ -41,7 +41,7 @@ The other way is to use blocks of content surrounded by expressions like this:
 </verbatim>
 This way the conditioned content is not limited to fit into a the argument
 position of a =%<nop>IFDEFINED{...}%= expression.  Blocks can be nested and are
-evaluated starting from the outside, contrary to standard <nop>TWikiML being
+evaluated starting from the outside, contrary to standard <nop>TopicMarkup being
 evaluated left-to-right-inside-out.
 
 ---++ Related work
@@ -55,9 +55,7 @@ expressions in %IF of TWiki-4.0 are specific to that platform and make only sens
 conditional content and %IF is an inline tag only.
 
 The advantage of this plugin is that you get a simpler mechanism for checking the condition
-which is however more flexible as the string can be generated arbitrarily using <nop>TWikiML.
-Furthermore, and possibly more important, this plugin is backwards compatible and may be used
-on a TWiki/Beijing, TWiki/Cairo and TWiki/Dakar engine.
+which is however more flexible as the string can be generated arbitrarily using <nop>TopicMarkup.
 
 This plugin has been externalized from the Foswiki:Extensions/NatSkinPlugin.
 
@@ -105,7 +103,7 @@ This is the multi-line version of [[#IFSDEFINED][IFSDEFINED]].
 IFDEFINEDTHEN expressions can be nested safely.  Within a single IFDEFINEDTHEN
 the ELSIFDEFINED parts can be repeated arbitrarily.  Before rendering the
 =&lt;then|elsif|else condition>= any =$nop= string will be removed first.
-Thereby nested <nop>TWikiML expressions can be prevented from being expanded in
+Thereby nested <nop>TopicMarkup expressions can be prevented from being expanded in
 advance.
 
 ---+++ IFACCESS
@@ -148,7 +146,7 @@ A similar functionality is available using
 of the SpreadSheetPlugin.
 This is still preferable if you need more computation based on CALC in the 
 then/else branches. The IFEXISTS version however is more lightweigted, comes with a much simpler syntax 
-and allows more complex <nop>TWikiMarkup in the then/else branches.
+and allows more complex <nop>TopicMarkup in the then/else branches.
 
 ---++ Demo
    * Set FOO = foo
@@ -166,14 +164,14 @@ and allows more complex <nop>TWikiMarkup in the then/else branches.
    | *File:* | *Description:* |
    | ==data/System/%TOPIC%.txt== | Plugin topic |
    | ==lib/Foswiki/Plugins/%TOPIC%.pm== | Plugin Perl module |
-   * (Dakar) Visit =configure= in your TWiki installation, and enable the plugin in the {Plugins} section.
+   * (Dakar) Visit =configure= in your installation, and enable the plugin in the {Plugins} section.
 
 ---++ Plugin Info
 <!-- provided for compatibility only
    * Set SHORTDESCRIPTION = Render content conditionally
 -->
-|  Plugin Author: | TWiki:Main.MichaelDaum |
-|  Copyright &copy;: | 2006-2008, Michael Daum http://michaeldaumconsulting.com |
+|  Plugin Author: | Michael Daum |
+|  Copyright &copy;: | 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Plugin Version: | v1.02 |
 |  Change History: | <!-- specify latest version first -->&nbsp; |
@@ -197,7 +195,5 @@ and allows more complex <nop>TWikiMarkup in the then/else branches.
 |  Plugin Home: | Foswiki:Extensions/%TOPIC% |
 |  Feedback: | Foswiki:Extensions/%TOPIC%Dev |
 
-
--- TWiki:Main.MichaelDaum - 03 Jul 2008
 
 %META:FILEATTACHMENT{name="wikiringlogo40x40.png" attachment="wikiringlogo40x40.png" attr="h" comment="" date="1189787359" path="wikiringlogo40x40.png" size="2571" stream="wikiringlogo40x40.png" tmpFilename="" user="ProjectContributor" version="1"}%

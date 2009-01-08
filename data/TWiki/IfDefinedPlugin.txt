@@ -158,13 +158,7 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
 
 
 ---++ Plugin Installation Instructions
-
-   * [[http://twiki.org/p/pub/Plugins/%TOPIC%/%TOPIC%.zip][Download]] the ZIP file
-   * Unzip it in your twiki installation directory. Content: 
-   | *File:* | *Description:* |
-   | ==data/System/%TOPIC%.txt== | Plugin topic |
-   | ==lib/Foswiki/Plugins/%TOPIC%.pm== | Plugin Perl module |
-   * (Dakar) Visit =configure= in your installation, and enable the plugin in the {Plugins} section.
+%$INSTALL_INSTRUCTIONS%
 
 ---++ Plugin Info
 <!-- provided for compatibility only
@@ -173,8 +167,9 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
 |  Plugin Author: | Michael Daum |
 |  Copyright &copy;: | 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | v1.02 |
+|  Plugin Version: | v1.10 |
 |  Change History: | <!-- specify latest version first -->&nbsp; |
+|  07 Jan 2009: | certified for foswiki/compat |
 |  03 Jul 2008: | more rookie perl errors | 
 |  05 Oct 2007: | fixed a rookie perl error |
 |  20 Jun 2007: | added IFEXISTS ;\
@@ -191,7 +186,6 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
 |  CPAN Dependencies: | none |
 |  Other Dependencies: | none |
 |  Perl Version: | 5.8 |
-|  Foswiki:Extensions/Benchmark: | %SYSTEMWEB%.GoodStyle nn%, %SYSTEMWEB%.FormattedSearch nn%, %TOPIC% nn% |
 |  Plugin Home: | Foswiki:Extensions/%TOPIC% |
 |  Feedback: | Foswiki:Extensions/%TOPIC%Dev |
 

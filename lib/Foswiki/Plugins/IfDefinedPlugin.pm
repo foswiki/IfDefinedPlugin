@@ -17,9 +17,9 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-package TWiki::Plugins::IfDefinedPlugin;
+package Foswiki::Plugins::IfDefinedPlugin;
 
-use TWiki::Attrs;
+use Foswiki::Attrs;
 use strict;
 use vars qw( 
   $VERSION $RELEASE
@@ -72,7 +72,7 @@ sub handleIfDefined {
   #writeDebug("called handleIfDefined($args)");
 
   $args ||= '';
-  my $params = new TWiki::Attrs($args);
+  my $params = new Foswiki::Attrs($args);
   my $theVariable = $params->{_DEFAULT};
   my $theAction = $params->{action} || '';
   my $theThen = $params->{then};
@@ -99,7 +99,7 @@ sub handleIfDefinedThen {
   #writeDebug("called handleIfDefinedThen($args)");
 
   $args ||= '';
-  my $params = new TWiki::Attrs($args);
+  my $params = new Foswiki::Attrs($args);
   my $theVariable = $params->{_DEFAULT};
   my $theAction = $params->{action} || '';
   my $theGlue = $params->{glue} || 'on'; 
@@ -142,10 +142,10 @@ sub ifDefinedImpl {
   $after = '' if ($theGlue eq 'on') || !$after;
 
   if(&escapeParameter($theVariable)) {
-    $theVariable = TWiki::Func::expandCommonVariables($theVariable, $currentTopic, $currentWeb);
+    $theVariable = Foswiki::Func::expandCommonVariables($theVariable, $currentTopic, $currentWeb);
   }
   if(&escapeParameter($theAs)) {
-    $theAs = TWiki::Func::expandCommonVariables($theAs, $currentTopic, $currentWeb);
+    $theAs = Foswiki::Func::expandCommonVariables($theAs, $currentTopic, $currentWeb);
   }
 
   unless (defined $currentAction) {
@@ -158,7 +158,7 @@ sub ifDefinedImpl {
     }
     if ($theVariable =~ /^($theAs)$/s) {
       if ($theThen =~ s/\$nop//go) {
-	$theThen = TWiki::Func::expandCommonVariables($theThen, $currentTopic, $currentWeb);
+	$theThen = Foswiki::Func::expandCommonVariables($theThen, $currentTopic, $currentWeb);
       }
       $theThen =~ s/\$(test|variable)/$theVariable/g;
       $theThen =~ s/\$value/$theAs/g;
@@ -169,7 +169,7 @@ sub ifDefinedImpl {
   return $before."%IFDEFINEDTHEN{$theElsIfArgs}%$theElse%FIDEFINED%".$after if $theElsIfArgs;
 
   if ($theElse =~ s/\$nop//go) {
-    $theElse = TWiki::Func::expandCommonVariables($theElse, $currentTopic, $currentWeb);
+    $theElse = Foswiki::Func::expandCommonVariables($theElse, $currentTopic, $currentWeb);
   }
 
   $theElse =~ s/\$test/$theVariable/g;
@@ -182,7 +182,7 @@ sub handleIfExists {
   my ($args, $before, $after) = @_;
 
   $args ||= '';
-  my $params = new TWiki::Attrs($args);
+  my $params = new Foswiki::Attrs($args);
   my $theGlue = $params->{glue} || 'on';
   my $theWebTopic = $params->{_DEFAULT} || $params->{topic} || "$currentWeb.$currentTopic";
   my $theThen = $params->{then};
@@ -191,11 +191,11 @@ sub handleIfExists {
   $theThen = 1 unless defined $theThen;
   $theElse = 0 unless defined $theElse;
 
-  my ($thisWeb, $thisTopic) = TWiki::Func::normalizeWebTopicName($currentWeb, $theWebTopic);
-  my $doesExist = TWiki::Func::topicExists($thisWeb, $thisTopic);
+  my ($thisWeb, $thisTopic) = Foswiki::Func::normalizeWebTopicName($currentWeb, $theWebTopic);
+  my $doesExist = Foswiki::Func::topicExists($thisWeb, $thisTopic);
   my $result = ($doesExist)?$theThen:$theElse;
 
-  $result = TWiki::Func::expandCommonVariables($result, $currentTopic, $currentWeb)  
+  $result = Foswiki::Func::expandCommonVariables($result, $currentTopic, $currentWeb)  
     if &escapeParameter($result, web=>$thisWeb, topic=>$thisTopic);
 
   $before = '' if ($theGlue eq 'on') || !$before;
@@ -208,12 +208,12 @@ sub handleIfExists {
 sub handleIfAccess {
   my ($args, $before, $after) = @_;
 
-  #writeDebug("called handleIfAccess($args)");
   $args ||= '';
-  my $params = new TWiki::Attrs($args);
+  #writeDebug("called handleIfAccess($args)");
+  my $params = new Foswiki::Attrs($args);
   my $theWebTopic = $params->{_DEFAULT} || $params->{topic} || $currentTopic;
   my $theType = $params->{type} || 'view';
-  my $theUser = $params->{user} || TWiki::Func::getWikiName();
+  my $theUser = $params->{user} || Foswiki::Func::getWikiName();
   my $theThen = $params->{then};
   my $theElse = $params->{else};
   my $theGlue = $params->{glue} || 'on';
@@ -223,15 +223,14 @@ sub handleIfAccess {
 
   $theType = 'change' if $theType =~ /^edit$/i;
 
-  my ($thisWeb, $thisTopic) = TWiki::Func::normalizeWebTopicName($currentWeb, $theWebTopic);
-  my $hasAccess = TWiki::Func::checkAccessPermission($theType, $theUser, undef, $thisTopic, $thisWeb);
+  my ($thisWeb, $thisTopic) = Foswiki::Func::normalizeWebTopicName($currentWeb, $theWebTopic);
+  my $hasAccess = Foswiki::Func::checkAccessPermission($theType, $theUser, undef, $thisTopic, $thisWeb);
 
-  #writeDebug("hasAccess=$hasAccess");
   #writeDebug("theUser=$theUser hasAccess=$hasAccess thisWeb=$thisWeb thisTopic=$thisTopic");
 
   my $result = ($hasAccess)?$theThen:$theElse;
 
-  $result = TWiki::Func::expandCommonVariables($result, $currentTopic, $currentWeb) 
+  $result = Foswiki::Func::expandCommonVariables($result, $currentTopic, $currentWeb) 
     if &escapeParameter($result, web=>$thisWeb, topic=>$thisTopic);
 
   #writeDebug("result=$result");
@@ -251,7 +250,7 @@ sub escapeParameter {
   foreach my $key (keys %params) {
     if ($_[0] =~ s/\$$key\b/$params{$key}/g) {
       $found = 1;
-      print STDERR "found key=$key, value=$params{$key}\n";
+      #print STDERR "found key=$key, value=$params{$key}\n";
     }
   }
 
@@ -274,12 +273,12 @@ sub getRequestAction {
 
   return $currentAction if $currentAction;
 
-  my $request = TWiki::Func::getCgiQuery();
+  my $request = Foswiki::Func::getRequestObject();
 
   if (defined($request->action)) {
     $currentAction = $request->action();
   } else {
-    my $context = TWiki::Func::getContext();
+    my $context = Foswiki::Func::getContext();
 
     # not all cgi actions we want to distinguish set their context
     # so only use those we are sure of

@@ -1,13 +1,4 @@
 %META:TOPICINFO{author="ProjectContributor" date="1023947640" format="1.0" version="$Rev$"}%
-<!--
-
-   PLEASE DO NOT EDIT THIS TOPIC
-
-   It is automatically generated from the subversion repository, and any changes
-   you make will simply be overwritten the next time a release is generated.
-
-   Instead, you could check your fix in, raise a bug in the Bugs web, or mail the author(s).
--->
 ---+!! <nop>%TOPIC%
 
 %TOC%
@@ -45,20 +36,15 @@ evaluated starting from the outside, contrary to standard <nop>TopicMarkup being
 evaluated left-to-right-inside-out.
 
 ---++ Related work
-Similar extensions have been done before but are either only available as an integral part of TWiki-4.0 
-(see Foswiki:System.IfStatements) or unmaintained (see Foswiki:Extensions/ConditionalPlugin).
-Especially these two alternatives are rather similar as they defined the same tag (%IF).
-The main differences between those and this plugin here is that they have a more elaborated
-conditon parser that allows to evaluate more complex boolean expressions. Some of the
-expressions in %IF of TWiki-4.0 are specific to that platform and make only sense there
-(context). The other difference is that the IFDEFINED tag family allows nested blocks of
-conditional content and %IF is an inline tag only.
-
-The advantage of this plugin is that you get a simpler mechanism for checking the condition
-which is however more flexible as the string can be generated arbitrarily using <nop>TopicMarkup.
-
-This plugin has been externalized from the Foswiki:Extensions/NatSkinPlugin.
-
+An %IF conditional is part of Foswiki as well. See Foswiki:System.IfStatements. The 
+main differences between IF and IFDEFINED are
+   1 IF comes with a fullfledged boolean expression parser whereas IFDEFINED only checks
+     if a test expression expands to a non-empty string.
+   1 This plugin comes with separate conditionals IFEXISTS and IFACCESS to implement
+     some of the most commonly used tests in <nop>WikiApplications
+   1 IFDEFINED's sister IFDEFINEDTHEN also provides a section-oriented conditional
+   1 IFDEFINED comes with a "glue" feature to remov whitesapce before and after the
+     conditional statement (can be switched off optionally)
 
 ---++ Syntax Rules
 ---+++ IFDEFINED
@@ -167,8 +153,9 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
 |  Plugin Author: | Michael Daum |
 |  Copyright &copy;: | 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | v1.10 |
+|  Plugin Version: | v2.00 |
 |  Change History: | <!-- specify latest version first -->&nbsp; |
+|  23 Apr 2009: | converted to foswiki plugin |
 |  07 Jan 2009: | certified for foswiki/compat |
 |  03 Jul 2008: | more rookie perl errors | 
 |  05 Oct 2007: | fixed a rookie perl error |
@@ -187,7 +174,7 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
 |  Other Dependencies: | none |
 |  Perl Version: | 5.8 |
 |  Plugin Home: | Foswiki:Extensions/%TOPIC% |
-|  Feedback: | Foswiki:Extensions/%TOPIC%Dev |
+|  Feedback: | Foswiki:Support/%TOPIC% |
 
 
 %META:FILEATTACHMENT{name="wikiringlogo40x40.png" attachment="wikiringlogo40x40.png" attr="h" comment="" date="1189787359" path="wikiringlogo40x40.png" size="2571" stream="wikiringlogo40x40.png" tmpFilename="" user="ProjectContributor" version="1"}%

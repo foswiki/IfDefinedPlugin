@@ -30,7 +30,7 @@ use vars qw(
 );
 
 $VERSION = '$Rev$';
-$RELEASE = 'v1.02';
+$RELEASE = 'v2.00';
 $NO_PREFS_IN_TOPIC = 1;
 $SHORTDESCRIPTION = 'Render content conditionally';
 

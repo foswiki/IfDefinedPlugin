@@ -153,7 +153,8 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
 |  Plugin Author: | Michael Daum |
 |  Copyright &copy;: | 2006-2009, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Plugin Version: | v2.00 |
+|  Release: | %$RELEASE% |
+|  Version: | %$VERSION% |
 |  Change History: | <!-- specify latest version first -->&nbsp; |
 |  23 Apr 2009: | converted to foswiki plugin |
 |  07 Jan 2009: | certified for foswiki/compat |

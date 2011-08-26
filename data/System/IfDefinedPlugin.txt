@@ -1,5 +1,10 @@
 %META:TOPICINFO{author="ProjectContributor" date="1023947640" format="1.0" version="$Rev$"}%
 ---+!! <nop>%TOPIC%
+<div class="foswikiWarningMessage">
+Warning: This plugin is deprecated. Please use [[%SYSTEMWEB%.VarIF][%IF]] instead. The only remaining
+feature not covered boy foswiki's core means is the sectional conditionals %IFDEFINEDTHEN, %ELSIFDEFINED, %ELSEDEFINED, %FIDEFINED.
+Please try to convert your wiki applications using a combination of %IF and %INCLUDE.
+</div>
 
 %TOC%
 
@@ -92,7 +97,8 @@ the ELSIFDEFINED parts can be repeated arbitrarily.  Before rendering the
 Thereby nested <nop>TopicMarkup expressions can be prevented from being expanded in
 advance.
 
----+++ IFACCESS
+---+++ IFACCESS 
+
 *Syntax*:
 <verbatim>
 %IFACCESS%
@@ -140,7 +146,7 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
    * FOO is %IFDEFINED{"%FOO%" as="bar" then=" " else="not" glue="off"}% defined as "bar".
    * BAR is %IFDEFINED{"%BAR%" then=" " else="not" glue="off"}% defined.
    * %WIKIUSERNAME% has %IFACCESS{type="change" then=" " else=" no "}% write access to %TOPIC%
-   * %MAINWEB%.WikiGuest has %IFACCESS{user="WikiGuest" type="change" then=" " else=" no "}% write access to %TOPIC%
+   * %USERSWEB%.WikiGuest has %IFACCESS{user="WikiGuest" type="change" then=" " else=" no "}% write access to %TOPIC%
 
 
 ---++ Plugin Installation Instructions
@@ -151,11 +157,12 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
    * Set SHORTDESCRIPTION = Render content conditionally
 -->
 |  Plugin Author: | Michael Daum |
-|  Copyright &copy;: | 2006-2009, Michael Daum http://michaeldaumconsulting.com |
+|  Copyright &copy;: | 2006-2011, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- specify latest version first -->&nbsp; |
+|  26 Aug 2011: | use =getCgiQuery= instead of =getRequestObject= for backwards compatibility |
 |  23 Apr 2009: | converted to foswiki plugin |
 |  07 Jan 2009: | certified for foswiki/compat |
 |  03 Jul 2008: | more rookie perl errors | 

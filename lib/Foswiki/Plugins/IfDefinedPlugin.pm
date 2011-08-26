@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2009 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2006-2011 Michael Daum http://michaeldaumconsulting.com
 #
 # Based on the NatSkinPlugin
 #
@@ -30,7 +30,7 @@ use vars qw(
 );
 
 $VERSION = '$Rev$';
-$RELEASE = 'v2.00';
+$RELEASE = '2.01';
 $NO_PREFS_IN_TOPIC = 1;
 $SHORTDESCRIPTION = 'Render content conditionally';
 
@@ -273,7 +273,7 @@ sub getRequestAction {
 
   return $currentAction if $currentAction;
 
-  my $request = Foswiki::Func::getRequestObject();
+  my $request = Foswiki::Func::getCgiQuery();
 
   if (defined($request->action)) {
     $currentAction = $request->action();

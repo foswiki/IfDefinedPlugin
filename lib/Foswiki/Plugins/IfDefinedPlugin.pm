@@ -21,249 +21,282 @@ package Foswiki::Plugins::IfDefinedPlugin;
 
 use Foswiki::Attrs;
 use strict;
-use vars qw( 
+use vars qw(
   $VERSION $RELEASE
-  $currentAction 
+  $currentAction
   $baseWeb $baseTopic
   $currentWeb $currentTopic $currentAction
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
 
-$VERSION = '$Rev$';
-$RELEASE = '2.01';
+$VERSION           = '$Rev$';
+$RELEASE           = '2.01';
 $NO_PREFS_IN_TOPIC = 1;
-$SHORTDESCRIPTION = 'Render content conditionally';
+$SHORTDESCRIPTION  = 'Render content conditionally';
 
-use constant DEBUG => 0; # toggle me
+use constant DEBUG => 0;    # toggle me
 
 ###############################################################################
 sub writeDebug {
-  print STDERR '- IfDefinedPlugin - '.$_[0]."\n" if DEBUG;
+    print STDERR '- IfDefinedPlugin - ' . $_[0] . "\n" if DEBUG;
 }
 
 ###############################################################################
 sub initPlugin {
-  ($baseTopic, $baseWeb) = @_;
+    ( $baseTopic, $baseWeb ) = @_;
 
-  $currentAction = undef;
-  return 1;
+    $currentAction = undef;
+    return 1;
 }
 
 ###############################################################################
 sub commonTagsHandler {
-# $_[0]: $text, $_[1]: $topic, $_[2]: $web
-  $currentWeb = $_[2];
-  $currentTopic = $_[1];
-  $currentAction = '';
 
-  $_[0] =~ s/(\s*)%IFDEFINED{(.*?)}%(\s*)/&handleIfDefined($2, $1, $3)/geos;
-  $_[0] =~ s/(\s*)%IFACCESS%(\s*)/&handleIfAccess(undef, $1, $2)/geos;
-  $_[0] =~ s/(\s*)%IFACCESS{(.*?)}%(\s*)/&handleIfAccess($2, $1, $3)/geos;
-  $_[0] =~ s/(\s*)%IFEXISTS{(.*?)}%(\s*)/&handleIfExists($2, $1, $3)/geos;
-  while ($_[0] =~ s/(\s*)%IFDEFINEDTHEN{(?!.*%IFDEFINEDTHEN)(.*?)}%(.*?)%FIDEFINED%(\s*)/&handleIfDefinedThen($2, $3, $1, $4)/geos) {
-    # nop
-  }
+    # $_[0]: $text, $_[1]: $topic, $_[2]: $web
+    $currentWeb    = $_[2];
+    $currentTopic  = $_[1];
+    $currentAction = '';
+
+    $_[0] =~ s/(\s*)%IFDEFINED{(.*?)}%(\s*)/&handleIfDefined($2, $1, $3)/geos;
+    $_[0] =~ s/(\s*)%IFACCESS%(\s*)/&handleIfAccess(undef, $1, $2)/geos;
+    $_[0] =~ s/(\s*)%IFACCESS{(.*?)}%(\s*)/&handleIfAccess($2, $1, $3)/geos;
+    $_[0] =~ s/(\s*)%IFEXISTS{(.*?)}%(\s*)/&handleIfExists($2, $1, $3)/geos;
+    while ( $_[0] =~
+s/(\s*)%IFDEFINEDTHEN{(?!.*%IFDEFINEDTHEN)(.*?)}%(.*?)%FIDEFINED%(\s*)/&handleIfDefinedThen($2, $3, $1, $4)/geos
+      )
+    {
+
+        # nop
+    }
 }
 
 ###############################################################################
 sub handleIfDefined {
-  my ($args, $before, $after) = @_;
+    my ( $args, $before, $after ) = @_;
 
-  #writeDebug("called handleIfDefined($args)");
+    #writeDebug("called handleIfDefined($args)");
 
-  $args ||= '';
-  my $params = new Foswiki::Attrs($args);
-  my $theVariable = $params->{_DEFAULT};
-  my $theAction = $params->{action} || '';
-  my $theThen = $params->{then};
-  my $theElse = $params->{else} || '';
-  my $theGlue = $params->{glue} || 'on';
-  my $theAs = $params->{as};
+    $args ||= '';
+    my $params      = new Foswiki::Attrs($args);
+    my $theVariable = $params->{_DEFAULT};
+    my $theAction   = $params->{action} || '';
+    my $theThen     = $params->{then};
+    my $theElse     = $params->{else} || '';
+    my $theGlue     = $params->{glue} || 'on';
+    my $theAs       = $params->{as};
 
-  $theVariable = '' unless defined $theVariable;
-  $theAs = '.+' unless defined $theAs;
-  $theThen = $theVariable unless defined $theThen;
+    $theVariable = ''           unless defined $theVariable;
+    $theAs       = '.+'         unless defined $theAs;
+    $theThen     = $theVariable unless defined $theThen;
 
-  &escapeParameter($theThen);
-  &escapeParameter($theElse);
+    &escapeParameter($theThen);
+    &escapeParameter($theElse);
 
-  return &ifDefinedImpl(
-    $theVariable, $theAction, $theThen, $theElse, undef, $before, $after,
-    $theGlue, $theAs);
+    return &ifDefinedImpl(
+        $theVariable, $theAction, $theThen, $theElse, undef,
+        $before,      $after,     $theGlue, $theAs
+    );
 }
 
 ###############################################################################
 sub handleIfDefinedThen {
-  my ($args, $text, $before, $after) = @_;
+    my ( $args, $text, $before, $after ) = @_;
 
-  #writeDebug("called handleIfDefinedThen($args)");
+    #writeDebug("called handleIfDefinedThen($args)");
 
-  $args ||= '';
-  my $params = new Foswiki::Attrs($args);
-  my $theVariable = $params->{_DEFAULT};
-  my $theAction = $params->{action} || '';
-  my $theGlue = $params->{glue} || 'on'; 
-  my $theAs = $params->{as};
+    $args ||= '';
+    my $params      = new Foswiki::Attrs($args);
+    my $theVariable = $params->{_DEFAULT};
+    my $theAction   = $params->{action} || '';
+    my $theGlue     = $params->{glue} || 'on';
+    my $theAs       = $params->{as};
 
-  $theVariable = '' unless defined $theVariable;
-  $theAs = '.+' unless defined $theAs;
+    $theVariable = ''   unless defined $theVariable;
+    $theAs       = '.+' unless defined $theAs;
 
-  my $theThen = $text; 
-  my $theElse = '';
-  my $elsIfArgs = '';
-  if ($text =~ /^(.*?)\s*%ELSIFDEFINED{(.*?)}%(.*)$/gos) {
-    $theThen = $1;
-    $elsIfArgs = $2;
-    $theElse = $3;
-  } elsif ($text =~ /^(.*?)\s*%ELSEDEFINED%(.*)$/gos) {
-    $theThen = $1;
-    $theElse = $2;
-  }
+    my $theThen   = $text;
+    my $theElse   = '';
+    my $elsIfArgs = '';
+    if ( $text =~ /^(.*?)\s*%ELSIFDEFINED{(.*?)}%(.*)$/gos ) {
+        $theThen   = $1;
+        $elsIfArgs = $2;
+        $theElse   = $3;
+    }
+    elsif ( $text =~ /^(.*?)\s*%ELSEDEFINED%(.*)$/gos ) {
+        $theThen = $1;
+        $theElse = $2;
+    }
 
-  return &ifDefinedImpl(
-    $theVariable, $theAction, $theThen, $theElse, $elsIfArgs, $before, $after,
-    $theGlue, $theAs);
+    return &ifDefinedImpl(
+        $theVariable, $theAction, $theThen, $theElse, $elsIfArgs,
+        $before,      $after,     $theGlue, $theAs
+    );
 }
-
 
 ###############################################################################
 sub ifDefinedImpl {
-  my ($theVariable, $theAction, $theThen, $theElse, $theElsIfArgs, $before, $after, $theGlue, $theAs) = @_;
+    my (
+        $theVariable, $theAction, $theThen, $theElse, $theElsIfArgs,
+        $before,      $after,     $theGlue, $theAs
+    ) = @_;
 
-  #writeDebug("called ifDefinedImpl()");
-  #writeDebug("theVariable='$theVariable'");
-  #writeDebug("theAction='$theAction'");
-  #writeDebug("theThen='$theThen'");
-  #writeDebug("theElse='$theElse'");
-  #writeDebug("theElsIfArgs='$theElsIfArgs'") if $theElsIfArgs;
-  #writeDebug("theAs='$theAs'");
-  
-  $before = '' if ($theGlue eq 'on') || !$before;
-  $after = '' if ($theGlue eq 'on') || !$after;
+    #writeDebug("called ifDefinedImpl()");
+    #writeDebug("theVariable='$theVariable'");
+    #writeDebug("theAction='$theAction'");
+    #writeDebug("theThen='$theThen'");
+    #writeDebug("theElse='$theElse'");
+    #writeDebug("theElsIfArgs='$theElsIfArgs'") if $theElsIfArgs;
+    #writeDebug("theAs='$theAs'");
 
-  if(&escapeParameter($theVariable)) {
-    $theVariable = Foswiki::Func::expandCommonVariables($theVariable, $currentTopic, $currentWeb);
-  }
-  if(&escapeParameter($theAs)) {
-    $theAs = Foswiki::Func::expandCommonVariables($theAs, $currentTopic, $currentWeb);
-  }
+    $before = '' if ( $theGlue eq 'on' ) || !$before;
+    $after  = '' if ( $theGlue eq 'on' ) || !$after;
 
-  unless (defined $currentAction) {
-    $currentAction = getRequestAction();
-  }
-
-  if (!$theAction || $currentAction =~ /$theAction/) {
-    if ($theVariable =~ /^%([A-Za-z][A-Za-z0-9_]*)%$/) {
-      $theVariable = '';
+    if ( &escapeParameter($theVariable) ) {
+        $theVariable =
+          Foswiki::Func::expandCommonVariables( $theVariable, $currentTopic,
+            $currentWeb );
     }
-    if ($theVariable =~ /^($theAs)$/s) {
-      if ($theThen =~ s/\$nop//go) {
-	$theThen = Foswiki::Func::expandCommonVariables($theThen, $currentTopic, $currentWeb);
-      }
-      $theThen =~ s/\$(test|variable)/$theVariable/g;
-      $theThen =~ s/\$value/$theAs/g;
-      return $before.$theThen.$after;
+    if ( &escapeParameter($theAs) ) {
+        $theAs = Foswiki::Func::expandCommonVariables( $theAs, $currentTopic,
+            $currentWeb );
     }
-  }
-  
-  return $before."%IFDEFINEDTHEN{$theElsIfArgs}%$theElse%FIDEFINED%".$after if $theElsIfArgs;
 
-  if ($theElse =~ s/\$nop//go) {
-    $theElse = Foswiki::Func::expandCommonVariables($theElse, $currentTopic, $currentWeb);
-  }
+    unless ( defined $currentAction ) {
+        $currentAction = getRequestAction();
+    }
 
-  $theElse =~ s/\$test/$theVariable/g;
-  $theElse =~ s/\$value/$theAs/g;
-  return $before.$theElse.$after; # variable is empty
+    if ( !$theAction || $currentAction =~ /$theAction/ ) {
+        if ( $theVariable =~ /^%([A-Za-z][A-Za-z0-9_]*)%$/ ) {
+            $theVariable = '';
+        }
+        if ( $theVariable =~ /^($theAs)$/s ) {
+            if ( $theThen =~ s/\$nop//go ) {
+                $theThen =
+                  Foswiki::Func::expandCommonVariables( $theThen, $currentTopic,
+                    $currentWeb );
+            }
+            $theThen =~ s/\$(test|variable)/$theVariable/g;
+            $theThen =~ s/\$value/$theAs/g;
+            return $before . $theThen . $after;
+        }
+    }
+
+    return
+        $before
+      . "%IFDEFINEDTHEN{$theElsIfArgs}%$theElse%FIDEFINED%"
+      . $after
+      if $theElsIfArgs;
+
+    if ( $theElse =~ s/\$nop//go ) {
+        $theElse =
+          Foswiki::Func::expandCommonVariables( $theElse, $currentTopic,
+            $currentWeb );
+    }
+
+    $theElse =~ s/\$test/$theVariable/g;
+    $theElse =~ s/\$value/$theAs/g;
+    return $before . $theElse . $after;    # variable is empty
 }
 
 ###############################################################################
 sub handleIfExists {
-  my ($args, $before, $after) = @_;
+    my ( $args, $before, $after ) = @_;
 
-  $args ||= '';
-  my $params = new Foswiki::Attrs($args);
-  my $theGlue = $params->{glue} || 'on';
-  my $theWebTopic = $params->{_DEFAULT} || $params->{topic} || "$currentWeb.$currentTopic";
-  my $theThen = $params->{then};
-  my $theElse = $params->{else};
-  
-  $theThen = 1 unless defined $theThen;
-  $theElse = 0 unless defined $theElse;
+    $args ||= '';
+    my $params = new Foswiki::Attrs($args);
+    my $theGlue = $params->{glue} || 'on';
+    my $theWebTopic =
+         $params->{_DEFAULT}
+      || $params->{topic}
+      || "$currentWeb.$currentTopic";
+    my $theThen = $params->{then};
+    my $theElse = $params->{else};
 
-  my ($thisWeb, $thisTopic) = Foswiki::Func::normalizeWebTopicName($currentWeb, $theWebTopic);
-  my $doesExist = Foswiki::Func::topicExists($thisWeb, $thisTopic);
-  my $result = ($doesExist)?$theThen:$theElse;
+    $theThen = 1 unless defined $theThen;
+    $theElse = 0 unless defined $theElse;
 
-  $result = Foswiki::Func::expandCommonVariables($result, $currentTopic, $currentWeb)  
-    if &escapeParameter($result, web=>$thisWeb, topic=>$thisTopic);
+    my ( $thisWeb, $thisTopic ) =
+      Foswiki::Func::normalizeWebTopicName( $currentWeb, $theWebTopic );
+    my $doesExist = Foswiki::Func::topicExists( $thisWeb, $thisTopic );
+    my $result = ($doesExist) ? $theThen : $theElse;
 
-  $before = '' if ($theGlue eq 'on') || !$before;
-  $after = '' if ($theGlue eq 'on') || !$after;
+    $result =
+      Foswiki::Func::expandCommonVariables( $result, $currentTopic,
+        $currentWeb )
+      if &escapeParameter( $result, web => $thisWeb, topic => $thisTopic );
 
-  return $before.$result.$after;
+    $before = '' if ( $theGlue eq 'on' ) || !$before;
+    $after  = '' if ( $theGlue eq 'on' ) || !$after;
+
+    return $before . $result . $after;
 }
 
 ###############################################################################
 sub handleIfAccess {
-  my ($args, $before, $after) = @_;
+    my ( $args, $before, $after ) = @_;
 
-  $args ||= '';
-  #writeDebug("called handleIfAccess($args)");
-  my $params = new Foswiki::Attrs($args);
-  my $theWebTopic = $params->{_DEFAULT} || $params->{topic} || $currentTopic;
-  my $theType = $params->{type} || 'view';
-  my $theUser = $params->{user} || Foswiki::Func::getWikiName();
-  my $theThen = $params->{then};
-  my $theElse = $params->{else};
-  my $theGlue = $params->{glue} || 'on';
+    $args ||= '';
 
-  $theThen = 1 unless defined $theThen;
-  $theElse = 0 unless defined $theElse;
+    #writeDebug("called handleIfAccess($args)");
+    my $params      = new Foswiki::Attrs($args);
+    my $theWebTopic = $params->{_DEFAULT} || $params->{topic} || $currentTopic;
+    my $theType     = $params->{type} || 'view';
+    my $theUser     = $params->{user} || Foswiki::Func::getWikiName();
+    my $theThen     = $params->{then};
+    my $theElse     = $params->{else};
+    my $theGlue     = $params->{glue} || 'on';
 
-  $theType = 'change' if $theType =~ /^edit$/i;
+    $theThen = 1 unless defined $theThen;
+    $theElse = 0 unless defined $theElse;
 
-  my ($thisWeb, $thisTopic) = Foswiki::Func::normalizeWebTopicName($currentWeb, $theWebTopic);
-  my $hasAccess = Foswiki::Func::checkAccessPermission($theType, $theUser, undef, $thisTopic, $thisWeb);
+    $theType = 'change' if $theType =~ /^edit$/i;
 
-  #writeDebug("theUser=$theUser hasAccess=$hasAccess thisWeb=$thisWeb thisTopic=$thisTopic");
+    my ( $thisWeb, $thisTopic ) =
+      Foswiki::Func::normalizeWebTopicName( $currentWeb, $theWebTopic );
+    my $hasAccess =
+      Foswiki::Func::checkAccessPermission( $theType, $theUser, undef,
+        $thisTopic, $thisWeb );
 
-  my $result = ($hasAccess)?$theThen:$theElse;
+#writeDebug("theUser=$theUser hasAccess=$hasAccess thisWeb=$thisWeb thisTopic=$thisTopic");
 
-  $result = Foswiki::Func::expandCommonVariables($result, $currentTopic, $currentWeb) 
-    if &escapeParameter($result, web=>$thisWeb, topic=>$thisTopic);
+    my $result = ($hasAccess) ? $theThen : $theElse;
 
-  #writeDebug("result=$result");
+    $result =
+      Foswiki::Func::expandCommonVariables( $result, $currentTopic,
+        $currentWeb )
+      if &escapeParameter( $result, web => $thisWeb, topic => $thisTopic );
 
-  $before = '' if ($theGlue eq 'on') || !$before;
-  $after = '' if ($theGlue eq 'on') || !$after;
+    #writeDebug("result=$result");
 
-  return $before.$result.$after;
+    $before = '' if ( $theGlue eq 'on' ) || !$before;
+    $after  = '' if ( $theGlue eq 'on' ) || !$after;
+
+    return $before . $result . $after;
 }
 
 ###############################################################################
 sub escapeParameter {
-  my (undef, %params) = @_;
-  return 0 unless $_[0];
+    my ( undef, %params ) = @_;
+    return 0 unless $_[0];
 
-  my $found = 0;
-  foreach my $key (keys %params) {
-    if ($_[0] =~ s/\$$key\b/$params{$key}/g) {
-      $found = 1;
-      #print STDERR "found key=$key, value=$params{$key}\n";
+    my $found = 0;
+    foreach my $key ( keys %params ) {
+        if ( $_[0] =~ s/\$$key\b/$params{$key}/g ) {
+            $found = 1;
+
+            #print STDERR "found key=$key, value=$params{$key}\n";
+        }
     }
-  }
 
-  $found = 1 if $_[0] =~ s/\$percnt/%/g;
-  $found = 1 if $_[0] =~ s/\$nop//g;
-  $found = 1 if $_[0] =~ s/\\n/\n/g;
-  $found = 1 if $_[0] =~ s/\$n/\n/g;
-  $found = 1 if $_[0] =~ s/\\%/%/g;
-  $found = 1 if $_[0] =~ s/\$dollar/\$/g;
+    $found = 1 if $_[0] =~ s/\$percnt/%/g;
+    $found = 1 if $_[0] =~ s/\$nop//g;
+    $found = 1 if $_[0] =~ s/\\n/\n/g;
+    $found = 1 if $_[0] =~ s/\$n/\n/g;
+    $found = 1 if $_[0] =~ s/\\%/%/g;
+    $found = 1 if $_[0] =~ s/\$dollar/\$/g;
 
-  return $found;
+    return $found;
 }
-
 
 ###############################################################################
 # take the REQUEST_URI, strip off the PATH_INFO from the end, the last word
@@ -271,36 +304,40 @@ sub escapeParameter {
 # paths for the same action depending on the apache configuration (rewrites, aliases)
 sub getRequestAction {
 
-  return $currentAction if $currentAction;
+    return $currentAction if $currentAction;
 
-  my $request = Foswiki::Func::getCgiQuery();
+    my $request = Foswiki::Func::getCgiQuery();
 
-  if (defined($request->action)) {
-    $currentAction = $request->action();
-  } else {
-    my $context = Foswiki::Func::getContext();
-
-    # not all cgi actions we want to distinguish set their context
-    # so only use those we are sure of
-    return 'edit' if $context->{'edit'};
-    return 'view' if $context->{'view'};
-    return 'save' if $context->{'save'};
-    # TODO: more
-
-    # fall back to analyzing the path info
-    my $pathInfo = $ENV{'PATH_INFO'} || '';
-    $currentAction = $ENV{'REQUEST_URI'} || '';
-    if ($currentAction =~ /^.*?\/([^\/]+)$pathInfo.*$/) {
-      $currentAction = $1;
-    } else {
-      $currentAction = 'view';
+    if ( defined( $request->action ) ) {
+        $currentAction = $request->action();
     }
-    #writeDebug("PATH_INFO=$ENV{'PATH_INFO'}");
-    #writeDebug("REQUEST_URI=$ENV{'REQUEST_URI'}");
-    #writeDebug("currentAction=$currentAction");
+    else {
+        my $context = Foswiki::Func::getContext();
 
-  }
-  return $currentAction;
+        # not all cgi actions we want to distinguish set their context
+        # so only use those we are sure of
+        return 'edit' if $context->{'edit'};
+        return 'view' if $context->{'view'};
+        return 'save' if $context->{'save'};
+
+        # TODO: more
+
+        # fall back to analyzing the path info
+        my $pathInfo = $ENV{'PATH_INFO'} || '';
+        $currentAction = $ENV{'REQUEST_URI'} || '';
+        if ( $currentAction =~ /^.*?\/([^\/]+)$pathInfo.*$/ ) {
+            $currentAction = $1;
+        }
+        else {
+            $currentAction = 'view';
+        }
+
+        #writeDebug("PATH_INFO=$ENV{'PATH_INFO'}");
+        #writeDebug("REQUEST_URI=$ENV{'REQUEST_URI'}");
+        #writeDebug("currentAction=$currentAction");
+
+    }
+    return $currentAction;
 }
 
 ###############################################################################

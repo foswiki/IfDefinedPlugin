@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" date="1023947640" format="1.0" version="$Rev$"}%
+%META:TOPICINFO{author="ProjectContributor" date="1407719365" format="1.1" version="1"}%
 ---+!! <nop>%TOPIC%
 <div class="foswikiWarningMessage">
 Warning: This plugin is deprecated. Please use [[%SYSTEMWEB%.VarIF][%IF]] instead. The only remaining

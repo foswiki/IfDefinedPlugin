@@ -1,0 +1,9 @@
+*.gz
+*.swp
+IfDefinedPlugin.md5
+IfDefinedPlugin.sha1
+IfDefinedPlugin.tgz
+IfDefinedPlugin.txt
+IfDefinedPlugin.zip
+IfDefinedPlugin_installer
+IfDefinedPlugin_installer.pl

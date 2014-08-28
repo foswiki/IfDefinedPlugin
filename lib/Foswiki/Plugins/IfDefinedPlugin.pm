@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2011 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2006-2014 Michael Daum http://michaeldaumconsulting.com
 #
 # Based on the NatSkinPlugin
 #
@@ -21,6 +21,8 @@ package Foswiki::Plugins::IfDefinedPlugin;
 
 use Foswiki::Attrs;
 use strict;
+use warnings;
+
 use vars qw( 
   $VERSION $RELEASE
   $currentAction 
@@ -29,16 +31,16 @@ use vars qw(
   $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
 
-$VERSION = '$Rev$';
+$VERSION = '2.01';
 $RELEASE = '2.01';
 $NO_PREFS_IN_TOPIC = 1;
 $SHORTDESCRIPTION = 'Render content conditionally';
 
-use constant DEBUG => 0; # toggle me
+use constant TRACE => 0; # toggle me
 
 ###############################################################################
 sub writeDebug {
-  print STDERR '- IfDefinedPlugin - '.$_[0]."\n" if DEBUG;
+  print STDERR '- IfDefinedPlugin - '.$_[0]."\n" if TRACE;
 }
 
 ###############################################################################

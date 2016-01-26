@@ -58,11 +58,11 @@ sub commonTagsHandler {
   $currentTopic = $_[1];
   $currentAction = '';
 
-  $_[0] =~ s/(\s*)%IFDEFINED{(.*?)}%(\s*)/&handleIfDefined($2, $1, $3)/geos;
+  $_[0] =~ s/(\s*)%IFDEFINED\{(.*?)\}%(\s*)/&handleIfDefined($2, $1, $3)/geos;
   $_[0] =~ s/(\s*)%IFACCESS%(\s*)/&handleIfAccess(undef, $1, $2)/geos;
-  $_[0] =~ s/(\s*)%IFACCESS{(.*?)}%(\s*)/&handleIfAccess($2, $1, $3)/geos;
-  $_[0] =~ s/(\s*)%IFEXISTS{(.*?)}%(\s*)/&handleIfExists($2, $1, $3)/geos;
-  while ($_[0] =~ s/(\s*)%IFDEFINEDTHEN{(?!.*%IFDEFINEDTHEN)(.*?)}%(.*?)%FIDEFINED%(\s*)/&handleIfDefinedThen($2, $3, $1, $4)/geos) {
+  $_[0] =~ s/(\s*)%IFACCESS\{(.*?)\}%(\s*)/&handleIfAccess($2, $1, $3)/geos;
+  $_[0] =~ s/(\s*)%IFEXISTS\{(.*?)\}%(\s*)/&handleIfExists($2, $1, $3)/geos;
+  while ($_[0] =~ s/(\s*)%IFDEFINEDTHEN\{(?!.*%IFDEFINEDTHEN)(.*?)\}%(.*?)%FIDEFINED%(\s*)/&handleIfDefinedThen($2, $3, $1, $4)/geos) {
     # nop
   }
 }
@@ -113,7 +113,7 @@ sub handleIfDefinedThen {
   my $theThen = $text; 
   my $theElse = '';
   my $elsIfArgs = '';
-  if ($text =~ /^(.*?)\s*%ELSIFDEFINED{(.*?)}%(.*)$/gos) {
+  if ($text =~ /^(.*?)\s*%ELSIFDEFINED\{(.*?)\}%(.*)$/gos) {
     $theThen = $1;
     $elsIfArgs = $2;
     $theElse = $3;

@@ -1,6 +1,7 @@
-%META:TOPICINFO{author="ProjectContributor" comment="autosave" date="1356278772" format="1.1" version="1"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1737134719" format="1.1" version="1"}%
+---+!! %TOPIC%
+%FORMFIELD{"Description"}%
 
----+!! <nop>%TOPIC%
 <div class="foswikiWarningMessage">
 Warning: This plugin is deprecated. Please use [[%SYSTEMWEB%.VarIF][%IF]] instead. The only remaining
 feature not covered boy foswiki's core means is the sectional conditionals %IFDEFINEDTHEN, %ELSIFDEFINED, %ELSEDEFINED, %FIDEFINED.
@@ -142,19 +143,11 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
    * %USERSWEB%.WikiGuest has %IFACCESS{user="WikiGuest" type="change" then=" " else=" no "}% write access to %TOPIC%
 
 
----++ Plugin Installation Instructions
+---++ Installation Instructions
 %$INSTALL_INSTRUCTIONS%
 
----++ Plugin Info
-<!-- provided for compatibility only
-   * Set SHORTDESCRIPTION = Render content conditionally
--->
-|  Plugin Author: | Michael Daum |
-|  Copyright &copy;: | 2006-2014, Michael Daum http://michaeldaumconsulting.com |
-|  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Release: | %$RELEASE% |
-|  Version: | %$VERSION% |
-|  Change History: | <!-- specify latest version first -->&nbsp; |
+---++ Change History
+|  17 Jan 2025: | docu fixes |
 |  28 Aug 2014: | make sure the plugin is still releasable |
 |  26 Aug 2011: | use =getCgiQuery= instead of =getRequestObject= for backwards compatibility |
 |  23 Apr 2009: | converted to foswiki plugin |
@@ -172,5 +165,14 @@ and allows more complex <nop>TopicMarkup in the then/else branches.
                   added escape parameters and recursive variable expansion to the condition argument \
                   which helps to circumvent problems due to different plugin orders |
 |  21 Feb 2006: | Initial version |
-|  Plugin Home: | Foswiki:Extensions/%TOPIC% |
-|  Feedback: | Foswiki:Support/%TOPIC% |
+
+%META:FORM{name="PackageForm"}%
+%META:FIELD{name="Author" title="Author" value="Michael Daum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2006-2025, Michael Daum"}%
+%META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
+%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
+%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
+%META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%
+%META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/%TOPIC%"}%
+%META:FIELD{name="Support" title="Support" value="https://foswiki.org/Support/%TOPIC%"}%
+%META:FIELD{name="Version" title="Version" value="%$VERSION%"}%

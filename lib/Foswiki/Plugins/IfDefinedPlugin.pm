@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2006-2014 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2006-2025 Michael Daum http://michaeldaumconsulting.com
 #
 # Based on the NatSkinPlugin
 #
@@ -19,22 +19,22 @@
 
 package Foswiki::Plugins::IfDefinedPlugin;
 
-use Foswiki::Attrs;
 use strict;
 use warnings;
 
+use Foswiki::Attrs ();
+
 use vars qw( 
-  $VERSION $RELEASE
   $currentAction 
   $baseWeb $baseTopic
   $currentWeb $currentTopic $currentAction
-  $NO_PREFS_IN_TOPIC $SHORTDESCRIPTION
 );
 
-$VERSION = '2.01';
-$RELEASE = '2.01';
-$NO_PREFS_IN_TOPIC = 1;
-$SHORTDESCRIPTION = 'Render content conditionally';
+our $VERSION = '2.02';
+our $RELEASE = '%$RELEASE%';
+our $NO_PREFS_IN_TOPIC = 1;
+our $LICENSECODE = '%$LICENSECODE%';
+our $SHORTDESCRIPTION = 'Render content conditionally';
 
 use constant TRACE => 0; # toggle me
 
@@ -74,7 +74,7 @@ sub handleIfDefined {
   #writeDebug("called handleIfDefined($args)");
 
   $args ||= '';
-  my $params = new Foswiki::Attrs($args);
+  my $params = Foswiki::Attrs->new($args);
   my $theVariable = $params->{_DEFAULT};
   my $theAction = $params->{action} || '';
   my $theThen = $params->{then};
@@ -101,7 +101,7 @@ sub handleIfDefinedThen {
   #writeDebug("called handleIfDefinedThen($args)");
 
   $args ||= '';
-  my $params = new Foswiki::Attrs($args);
+  my $params = Foswiki::Attrs->new($args);
   my $theVariable = $params->{_DEFAULT};
   my $theAction = $params->{action} || '';
   my $theGlue = $params->{glue} || 'on'; 
@@ -184,7 +184,7 @@ sub handleIfExists {
   my ($args, $before, $after) = @_;
 
   $args ||= '';
-  my $params = new Foswiki::Attrs($args);
+  my $params = Foswiki::Attrs->new($args);
   my $theGlue = $params->{glue} || 'on';
   my $theWebTopic = $params->{_DEFAULT} || $params->{topic} || "$currentWeb.$currentTopic";
   my $theThen = $params->{then};
@@ -212,7 +212,7 @@ sub handleIfAccess {
 
   $args ||= '';
   #writeDebug("called handleIfAccess($args)");
-  my $params = new Foswiki::Attrs($args);
+  my $params = Foswiki::Attrs->new($args);
   my $theWebTopic = $params->{_DEFAULT} || $params->{topic} || $currentTopic;
   my $theType = $params->{type} || 'view';
   my $theUser = $params->{user} || Foswiki::Func::getWikiName();

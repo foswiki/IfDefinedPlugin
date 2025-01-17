@@ -1,2 +1,5 @@
+!noci
 data/System/IfDefinedPlugin.txt 0644
+lib/Foswiki/Plugins/IfDefinedPlugin/DEPENDENCIES 0644
+lib/Foswiki/Plugins/IfDefinedPlugin/MANIFEST 0644
 lib/Foswiki/Plugins/IfDefinedPlugin.pm 0644
